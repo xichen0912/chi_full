@@ -195,9 +195,9 @@ class Component extends DCLogic {
         sum: r.summary, hasSum: r.summary !== '',
         sortKey: DI[r.day] * 10000 + (r.start ? parseInt(r.start.replace(':', ''), 10) : 9999),
         saved: saved, savedStr: saved ? 'true' : 'false',
-        btnLabel: saved ? '✓ In My day' : 'Add to My day',
+        btnLabel: saved ? '✓ In My plan' : '+ Add to My plan',
         btnBg: saved ? '#314F44' : '#FFFFFF', btnFg: saved ? '#FFFFFF' : '#3A3B36', btnBorder: saved ? '#314F44' : '#C7C6BF',
-        toggle: function () { var on = window.CHIStore.toggle('awards', r.id); window.CHIShell.toast(on ? 'Added to My day.' : 'Removed from My day.'); self.forceUpdate(); }
+        toggle: function () { var on = window.CHIStore.toggle('awards', r.id); window.CHIShell.toast(on ? 'Added to My plan.' : 'Removed from My plan.'); self.forceUpdate(); }
       };
     });
     var q = (st.query || '').toLowerCase();

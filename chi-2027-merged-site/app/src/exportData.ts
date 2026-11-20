@@ -9,13 +9,14 @@ import { availableInterests } from './data/interests'
 import { defaultPlannedSessionIds, defaultSavedContentIds } from './data/mine'
 import { getRoomNotes } from './lib/access'
 import { DEFAULT_INTERESTS, KEYS } from './lib/store'
+import { NOW } from './data/now'
 
 declare global { interface Window { CHI: unknown } }
 
 window.CHI = {
   conference: { name: 'CHI 2027', city: 'Pittsburgh', dates: 'May 10–14, 2027', timeZone: 'Pittsburgh (UTC −04:00)' },
   // The prototype is set during the conference; Map and My use this as "now".
-  now: { date: '2027-05-10', time: '11:20', label: 'Mon, May 10 · 11:20' },
+  now: NOW,
   conferenceDays,
   sessions,
   rooms,

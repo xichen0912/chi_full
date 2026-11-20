@@ -1,8 +1,9 @@
 import type { Interest } from '../data/interests'
 import { sessions } from '../data/sessions'
 import { overlapsPlan } from '../lib/access'
-import { usePlan } from '../lib/store'
+import { togglePlan, usePlan } from '../lib/store'
 import { roomLabel } from '../data/venue'
+import { sessionStatus, statusLabel } from '../data/now'
 import type { Route } from '../lib/route'
 import type { Session } from '../types'
 import { AccessPreview } from './AccessPreview'
@@ -21,13 +22,17 @@ export function SessionCard({ session, interests, topicState, activeTopic, onTop
   const plan = usePlan()
   const planned = plan.includes(session.id)
   const conflict = overlapsPlan(session, sessions, plan)
+  const status = sessionStatus(session)
 
   return (
-    <article className={`session-card topic-${topicState} ${conflict ? 'is-conflict' : planned ? 'is-planned' : ''}`}>
+    <article className={`session-card topic-${topicState} ${conflict ? 'is-conflict' : planned ? 'is-planned' : ''} status-${status}`}>
       <div className="card-head">
         <span className="category">{session.category}</span>
-        <span className="card-link" aria-hidden="true">↗</span>
+        <button type="button" className={`card-plan ${planned ? 'is-planned' : ''}`} aria-pressed={planned} onClick={() => togglePlan(session.id)}>
+          {planned ? '✓ In My plan' : '+ Add to My plan'}
+        </button>
       </div>
+      {(status === 'live' || status === 'next' || status === 'ended') && <span className={`status-badge card-status ${status}`}>{statusLabel[status]}</span>}
       <h3>
         <button type="button" className="card-open" onClick={() => onGo({ view: 'session', id: session.id })}>{session.title}</button>
       </h3>

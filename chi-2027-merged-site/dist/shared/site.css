@@ -85,3 +85,96 @@
 /* Shared small parts the static pages use */
 .chi-toast { position: fixed; left: 50%; bottom: 24px; z-index: 120; transform: translate(-50%, 20px); padding: 12px 18px; border-radius: 10px; color: var(--cream); background: var(--deep); font: 500 14px/1.3 var(--sans); opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
 .chi-toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ==========================================================================
+   Spec layer — docs/VISUAL_SPEC.md
+   Small overrides that bring the four original page styles onto one spec.
+   Prefixed with body.chi-shell-body so they win over each page's own CSS.
+   ========================================================================== */
+:root { --r: 4px; --r-panel: 16px; --t-page: clamp(40px, 5vw, 56px); --t-section: 28px; }
+
+/* Page titles: one size and weight everywhere */
+body.chi-shell-body .program-intro h1,
+body.chi-shell-body .page-intro h1,
+body.chi-shell-body .page-title-block h1,
+body.chi-shell-body #page-title,
+body.chi-shell-body .my h1,
+body.chi-shell-body #dc-root h1 {
+  font: 600 var(--t-page)/1.02 var(--serif) !important;
+  letter-spacing: -.04em !important;
+}
+body.chi-shell-body .detail-hero h1 { font: 600 clamp(36px, 4.4vw, 48px)/1.05 var(--serif) !important; letter-spacing: -.035em !important; }
+body.chi-shell-body .program-intro { padding: 48px 0 36px; }
+
+/* Section headings */
+body.chi-shell-body #dc-root h2,
+body.chi-shell-body .sec-head h2,
+body.chi-shell-body .section-heading h2,
+body.chi-shell-body #directory-title {
+  font: 700 var(--t-section)/1.15 var(--serif) !important;
+  letter-spacing: -.03em !important;
+}
+
+/* Primary buttons → accent; secondary → outlined */
+body.chi-shell-body .primary-button,
+body.chi-shell-body .btn.primary,
+body.chi-shell-body #dc-root button[style*="background: #171816"],
+body.chi-shell-body #dc-root a[style*="background: #171816"] {
+  background: var(--accent) !important; border-color: var(--accent) !important; color: #fff !important; border-radius: var(--r) !important;
+}
+body.chi-shell-body .secondary-button { border-radius: var(--r); }
+
+/* Tags: one look */
+body.chi-shell-body .tag,
+body.chi-shell-body .card-extras .keyword-list button,
+body.chi-shell-body .detail-keywords button {
+  padding: 4px 8px !important; border: 0 !important; border-radius: var(--r) !important;
+  color: var(--accent) !important; background: var(--accent-soft) !important;
+  font: 600 12px/1.2 var(--sans) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+body.chi-shell-body .card-extras .keyword-list button.is-active { color: #fff !important; background: var(--accent) !important; }
+
+/* Radius: 4px for cards, panels and controls on the Map; 16px only for dark highlight panels */
+body.chi-shell-body .canvas,
+body.chi-shell-body .floorbar,
+body.chi-shell-body .layerbar,
+body.chi-shell-body .search,
+body.chi-shell-body .seg,
+body.chi-shell-body .seg button,
+body.chi-shell-body .quick,
+body.chi-shell-body .rest,
+body.chi-shell-body .btn,
+body.chi-shell-body .hit-row,
+body.chi-shell-body .fcol,
+body.chi-shell-body .results ul,
+body.chi-shell-body .ropts button,
+body.chi-shell-body .tripbox,
+body.chi-shell-body .lyr,
+body.chi-shell-body .rgrid button,
+body.chi-shell-body .lindex a { border-radius: var(--r) !important; }
+body.chi-shell-body .next,
+body.chi-shell-body .next-up { border-radius: var(--r-panel) !important; }
+body.chi-shell-body .canvas { box-shadow: none; }
+body.chi-shell-body .center h1 { font: 700 var(--t-section)/1.15 var(--serif); letter-spacing: -.03em; }
+body.chi-shell-body .center h1 span { font-family: var(--sans); font-size: 15px; letter-spacing: 0; }
+
+/* Links */
+body.chi-shell-body .my p a,
+body.chi-shell-body #dc-root p a,
+body.chi-shell-body .srcline a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+/* Ask CHI: same fonts as the site; icon-only on phones so it covers less */
+body.chi-shell-body .chat-composer textarea { font-family: var(--sans); font-size: 14px; }
+@media (max-width: 640px) {
+  body.chi-shell-body .chat-launcher:not(.is-open) > span:last-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  body.chi-shell-body .chat-launcher:not(.is-open) { min-width: 0; padding: 0 8px; }
+}
+
+/* Demo clock in the sidebar */
+.chi-clock { display: flex; align-items: center; gap: 10px; margin: -8px 6px 18px; padding: 10px 12px; border: 1px solid rgba(255,255,255,.12); border-radius: 4px; }
+.chi-clock i { width: 8px; height: 8px; flex: none; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 4px rgba(211,251,99,.18); }
+.chi-clock b { display: block; color: var(--lime); font: 700 13.5px/1.2 var(--serif); }
+.chi-clock small { display: block; color: #9bb0a8; font-size: 11px; }
+@media (max-width: 900px) { .chi-clock { margin: 4px 0 14px; } }
+.chi-top-clock { display: none; }
+@media (max-width: 900px) { .chi-top-clock { display: block; margin-left: auto; color: var(--lime); font: 700 13px/1 var(--serif); white-space: nowrap; } .chi-top-clock + .chi-menu { margin-left: 0; } }

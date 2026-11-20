@@ -11,7 +11,17 @@ import { externalHref, parseRoute, routeToSearch, type Route } from './lib/route
 import { setInterests, useInterests } from './lib/store'
 
 function App() {
-  const [selectedDate, setSelectedDate] = useState(conferenceDays[0].id)
+  const [selectedDate, setSelectedDateState] = useState<string>(() => {
+    try {
+      const saved = window.sessionStorage.getItem('chi-program-day')
+      if (saved && conferenceDays.some((day) => day.id === saved)) return saved
+    } catch { /* ignore */ }
+    return conferenceDays[0].id
+  })
+  const setSelectedDate = (date: string) => {
+    setSelectedDateState(date)
+    try { window.sessionStorage.setItem('chi-program-day', date) } catch { /* ignore */ }
+  }
   const interests = useInterests()
   const [topic, setTopic] = useState<string | null>(null)
   const [showInterests, setShowInterests] = useState(false)
@@ -108,7 +118,7 @@ function App() {
       {showInterests && (
         <InterestSelector selected={interests} onChange={setInterests} onClose={() => setShowInterests(false)} />
       )}
-      <Chatbot interests={interests} onGo={go} openFirst />
+      <Chatbot interests={interests} onGo={go} />
       <LayoutSwitch layout={layout} onChange={changeLayout} />
     </LayoutContext.Provider>
   )

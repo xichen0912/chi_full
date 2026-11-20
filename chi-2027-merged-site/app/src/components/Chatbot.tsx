@@ -32,10 +32,10 @@ interface ApiReply {
 }
 
 const suggestions = [
-  '周一 9 点有哪些 session？',
-  '我关注 accessibility，推荐看什么？',
-  '哪些房间更安静、无障碍？',
-  'Mina Patel 还出现在哪些论文里？',
+  'What is on Monday at 9 AM?',
+  'I care about accessibility. What should I see?',
+  'Where can I find a quiet, step-free room?',
+  'Which papers is Mina Patel on?',
 ]
 
 const people = getPeople(sessions)
@@ -77,11 +77,11 @@ function localAnswer(question: string): ApiReply {
   const query = question.toLowerCase()
   const tokens = query.split(/[^a-z0-9\u4e00-\u9fff]+/).filter((token) => token.length > 1)
 
-  if ((/周一|monday/.test(query)) && /9(?::00)?\s*(点|am)?/.test(query)) {
+  if ((/周一|monday/.test(query)) && /\b9\b|9(?::00)?\s*(点|am)/.test(query)) {
     const matches = sessions.filter((session) => session.date === '2027-05-10' && session.startTime === '9:00 AM')
     const planned = matches.find((session) => getPlan().includes(session.id))
     return {
-      answer: `周一上午 9:00 有 ${matches.length} 场：${matches.map((session) => `${session.title}（${roomLabel(session.room)}）`).join('；')}。${planned ? `你的 My 计划里已有 ${planned.title}，所以另一场与它时间冲突。` : ''}`,
+      answer: `There are ${matches.length} sessions on Monday at 9:00 AM: ${matches.map((session) => `${session.title} (${roomLabel(session.room)})`).join('; ')}.${planned ? ` ${planned.title} is already in My plan, so the other one overlaps it.` : ''}`,
       references: matches.map((session) => ({ kind: 'session' as const, id: session.id })),
       mode: 'demo',
     }
@@ -107,7 +107,7 @@ function localAnswer(question: string): ApiReply {
       .filter(([, room]) => room.sensoryFriendly && room.stepFree)
       .slice(0, 4)
     return {
-      answer: `需要安静可以去 M2 层的 Quiet Room M219。会场房间里，${matchingRooms.map(([name]) => roomLabel(name)).join('、')} 标记了感官友好或无台阶通行。打开 Map 可以看到具体位置和路线。`,
+      answer: `For a quiet break, use Quiet Room M219 on Level M2. Session rooms marked sensory-friendly and step-free: ${matchingRooms.map(([name]) => roomLabel(name)).join(', ')}. Open one on the Map for the route.`,
       references: [{ kind: 'room' as const, id: 'M2 - Room M219' }, ...matchingRooms.slice(0, 3).map(([id]) => ({ kind: 'room' as const, id }))],
       mode: 'demo',
     }
@@ -116,14 +116,14 @@ function localAnswer(question: string): ApiReply {
   const top = ranked.slice(0, 3)
   if (top.length) {
     return {
-      answer: `我在站内资料中找到 ${ranked.length} 个相关 session。最相关的是 ${top.map(({ session }) => session.title).join('、')}。打开下面的来源可以查看时间、房间和论文。`,
+      answer: `I found ${ranked.length} related sessions. The closest matches are ${top.map(({ session }) => session.title).join(', ')}. Open a source below for times, rooms and papers.`,
       references: top.map(({ session }) => ({ kind: 'session' as const, id: session.id })),
       mode: 'demo',
     }
   }
 
   return {
-    answer: '我暂时没在这个 CHI 原型的站内资料中找到对应信息。可以换成 session、论文作者、房间、时间或你的收藏来问我。',
+    answer: 'I could not find that in this prototype’s data. Try asking about a session, an author, a room, a time or something you saved.',
     references: [{ kind: 'program', id: 'program' }],
     mode: 'demo',
   }
@@ -138,11 +138,11 @@ function AssistantMark() {
 }
 
 const OPEN_KEY = 'askchi-open'
-const LOG_KEY = 'askchi-messages'
+const LOG_KEY = 'askchi-messages-v2'
 const welcome: Message = {
   id: 'welcome',
   role: 'assistant',
-  text: '你好，我是 Ask CHI。你可以问我站内的 session、论文、作者、时间、房间，也可以让我结合你的兴趣和已保存内容来比较。',
+  text: 'Hi, I’m Ask CHI. Ask me about sessions, papers, authors, times and rooms on this site, or ask me to compare options using your interests and saved items.',
 }
 function loadMessages(): Message[] {
   try {

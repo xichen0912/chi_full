@@ -21,6 +21,10 @@ One site built from four team prototypes:
 - **The Quiet Room is Room M219** on the Map, matching the Accessibility FAQ. Prayer rooms (M220/M221) and childcare (P2) are marked too.
 - **One palette** for every page: paper `#f4f3ef`, ink `#171816`, deep green `#314f44`, lime `#d3fb63` (on dark surfaces only), rust `#a54b25`.
 
+## Visual spec
+
+See `docs/VISUAL_SPEC.md`. Tokens and the spec layer live in `shared/site.css`.
+
 ## Cross-page links
 
 - Program session or room → Map with that room selected. "← Back to Program" uses the browser's history.

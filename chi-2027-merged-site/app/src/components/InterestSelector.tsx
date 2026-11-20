@@ -32,13 +32,15 @@ export function InterestSelector({ selected, onChange, onClose }: Props) {
         </div>
         <fieldset className="interest-grid">
           <legend className="sr-only">Research interests</legend>
-          {availableInterests.map((interest) => (
+          {/* The same list as People's interest editor, plus any directions added there. */}
+          {[...availableInterests, ...selected.filter((item) => !availableInterests.includes(item))].map((interest) => (
             <label key={interest} className={selected.includes(interest) ? 'is-selected' : ''}>
               <input type="checkbox" checked={selected.includes(interest)} onChange={() => toggle(interest)} />
-              <span>{interest}</span>
+              <span>{interest}{selected[0] === interest && <small className="interest-primary"> · Starting point</small>}</span>
             </label>
           ))}
         </fieldset>
+        <p className="interest-note">Shared with People and Recommendations. The first one you pick is your starting point.</p>
         <div className="dialog-footer">
           <button type="button" className="primary-button" onClick={onClose}>Done</button>
         </div>

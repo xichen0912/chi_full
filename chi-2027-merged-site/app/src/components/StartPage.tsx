@@ -10,6 +10,8 @@ import { NoteIcon, RoomNotes } from './RoomNotes'
 import { RoomMap } from './RoomMap'
 import { usePlan, useSavedPapers } from '../lib/store'
 import { roomLabel } from '../data/venue'
+import { NOW, sessionStatus, statusLabel } from '../data/now'
+import { NowStrip } from './NowStrip'
 
 interface Props {
   interests: Interest[]
@@ -28,6 +30,7 @@ function SlotCard({ session, variant, interests, onGo }: { session: Session; var
   const reasons = getForYouFeed(session, interests, sessions, savedContentIds).slice(0, 2)
   return (
     <article className={`slot-card is-${variant}`}>
+      {(() => { const st = sessionStatus(session); return (st === 'live' || st === 'next') ? <span className={`status-badge ${st}`}>{statusLabel[st]}</span> : null })()}
       <h3>
         <button type="button" className="slot-open" onClick={() => onGo({ view: 'session', id: session.id })}>{session.title}</button>
       </h3>
@@ -69,7 +72,8 @@ export function StartPage({ interests, selectedDate, onSelectDate, onOpenInteres
     const others = inSlot.filter((session) => session !== planned && score(session) > 0).sort((a, b) => score(b) - score(a))
     return { start, end: inSlot[0].endTime, planned, others }
   })
-  const next = slots.find((slot) => slot.planned)?.planned
+  // On the demo day, "next" skips planned sessions that have already ended.
+  const next = slots.find((slot) => slot.planned && sessionStatus(slot.planned) !== 'ended')?.planned
   const longDate = conferenceDays.find((item) => item.id === selectedDate)?.longDate
 
   const [clock, meridiem] = next ? next.startTime.split(' ') : ['', '']
@@ -92,9 +96,12 @@ export function StartPage({ interests, selectedDate, onSelectDate, onOpenInteres
           </button>
         </div>
 
+        {selectedDate === NOW.date && <NowStrip onGo={onGo} />}
+
         {next && (
           <section className="next-up" key={`${selectedDate}-${next.id}`} aria-label="Next session">
             <div className="next-main">
+              <span className="next-kicker">{selectedDate === NOW.date ? `Now ${NOW.time} · ${sessionStatus(next) === 'live' ? 'In progress' : 'Next in your plan'}` : 'First in your plan'}</span>
               <span className="next-clock">{clock}<small>{meridiem}</small></span>
               <h1>
                 <button type="button" className="slot-open" onClick={() => onGo({ view: 'session', id: next.id })}>{next.title}</button>
@@ -113,7 +120,7 @@ export function StartPage({ interests, selectedDate, onSelectDate, onOpenInteres
             const tone = slot.planned ? 'planned' : slot.others.length > 0 ? 'suggest' : 'gap'
             const clash = !!slot.planned && slot.others.some((session) => overlapsPlan(session, sessions, plannedSessionIds))
             return (
-              <li key={slot.start} className="timeline-slot" style={{ '--i': index } as CSSProperties}>
+              <li key={slot.start} className={`timeline-slot ${selectedDate === NOW.date && sessionStatus(day.find((session) => session.startTime === slot.start)!) === 'ended' ? 'is-past' : ''}`} style={{ '--i': index } as CSSProperties}>
                 <span className="slot-time">{slot.start}<small>{slot.end}</small></span>
                 <span className={`slot-node is-${tone} ${clash ? 'has-clash' : ''}`} aria-hidden="true" />
                 <div className="slot-cards">

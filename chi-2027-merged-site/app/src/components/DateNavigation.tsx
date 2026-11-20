@@ -1,4 +1,5 @@
 import type { ConferenceDay } from '../types'
+import { NOW } from '../data/now'
 
 interface Props {
   days: ConferenceDay[]
@@ -19,7 +20,7 @@ export function DateNavigation({ days, selectedDate, onSelect, markedDates = [] 
             aria-current={selectedDate === day.id ? 'date' : undefined}
             onClick={() => onSelect(day.id)}
           >
-            <span>{day.dayName}</span>
+            <span>{day.dayName}{day.id === NOW.date ? ' · Today' : ''}</span>
             <strong>{day.shortDate}</strong>
             {markedDates.includes(day.id) && <i className="date-dot" aria-label="Topic appears on this day" />}
           </button>

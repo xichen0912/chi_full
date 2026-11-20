@@ -413,7 +413,7 @@ footer a { color: var(--purple-strong); font-weight: 700; }
         <section class="hero" aria-labelledby="page-title">
           <div class="hero-grid">
             <div>
-              <h1 id="page-title">Who should I know at CHI ’27?</h1>
+              <h1 id="page-title">Who should I know at CHI 2027?</h1>
               <p class="hero-copy">
                 Find people across adjacent fields—not only people who use the same keywords. See why each person may
                 matter to your work, where you may encounter them, and what you want to do next.
@@ -645,9 +645,9 @@ footer a { color: var(--purple-strong); font-weight: 700; }
           <div id="intentionOptions" class="choice-grid"></div>
         </fieldset>
         <fieldset>
-          <legend>Where did you notice them?</legend>
-          <select id="contextSelect" required>
-            <option value="">Choose a conference moment</option>
+          <legend>Where did you notice them? <small>(optional)</small></legend>
+          <select id="contextSelect">
+            <option value="">Not sure yet</option>
             <option>Paper presentation</option>
             <option>Poster session</option>
             <option>Workshop</option>
@@ -660,7 +660,7 @@ footer a { color: var(--purple-strong); font-weight: 700; }
         </label>
         <div class="dialog-actions">
           <button id="cancelSave" class="secondary-button" type="button">Cancel</button>
-          <button class="primary-button" type="submit">Save to My People</button>
+          <button class="primary-button" type="submit">Save person</button>
         </div>
       </form>
     </dialog>
@@ -1093,7 +1093,7 @@ function renderSaved() {
     return `<article class="saved-item" data-person-id="${id}"><div class="saved-item-head"><h3>${escapeHtml(person.name)}</h3><button class="remove-save" type="button">Remove</button></div><div class="saved-meta"><span><b>Intention:</b> ${escapeHtml(save.intention)}</span><span><b>Noticed at:</b> ${escapeHtml(save.context)}</span><span><b>Next touchpoint:</b> ${escapeHtml(person.touchpoint)}</span></div>${save.note ? `<div class="saved-note">${escapeHtml(save.note)}</div>` : ""}</article>`;
   }).join("") : `<div class="saved-empty"><b>No saved people yet.</b><p>Use “Save with intention” on a person card to keep the reason and conference context.</p></div>`;
   $$(".remove-save", $("#savedList")).forEach(button => button.addEventListener("click", () => {
-    const id = button.closest(".saved-item").dataset.personId; delete state.saved[id]; persistSaves(); showToast("Removed from My People.");
+    const id = button.closest(".saved-item").dataset.personId; delete state.saved[id]; persistSaves(); showToast("Removed from saved people.");
   }));
 }
 
@@ -1189,8 +1189,8 @@ function contentRecommendationCard(item) {
       <div class="content-resources" aria-label="Available resources"><span class="${item.paperAvailable ? "available" : "unavailable"}">▤ ${item.paperAvailable ? "Paper available" : "Paper unavailable"}</span><span class="${item.videoAvailable ? "available" : "unavailable"}">▶ ${item.videoAvailable ? `Video · ${escapeHtml(item.videoDuration)}` : "Video unavailable"}</span></div>
       <div class="recommendation-actions">
         <button class="secondary-button content-not-relevant" type="button">Not relevant</button>
-        <button class="secondary-button content-save ${saved ? "saved-action" : ""}" type="button" ${item.contentId ? "" : "hidden"}>${saved ? "Saved to My ✓" : "Save paper"}</button>
-        <button class="secondary-button content-schedule ${scheduled ? "saved-action" : ""}" type="button">${scheduled ? "In My plan ✓" : "Add to My plan"}</button>
+        <button class="secondary-button content-save ${saved ? "saved-action" : ""}" type="button" ${item.contentId ? "" : "hidden"}>${saved ? "✓ Saved" : "Save paper"}</button>
+        <button class="secondary-button content-schedule ${scheduled ? "saved-action" : ""}" type="button">${scheduled ? "✓ In My plan" : "Add to My plan"}</button>
         <button class="primary-button content-details" type="button">View details</button>
       </div>
     </article>`;
@@ -1206,17 +1206,17 @@ function renderContentDetail(item) {
     const sessionKey = `${item.id}:${session.id}`; // "session:<rec>:<programSessionId>" → plan
     const open = state.activeSession === sessionKey;
     const sessionSaved = state.scheduleSaves.has(`session:${sessionKey}`);
-    return `<article class="detail-session-card ${open ? "open" : ""}"><button class="session-open" type="button" data-session-key="${sessionKey}" aria-expanded="${open}"><span class="session-day">${escapeHtml(session.time.split(" · ")[0])}</span><span><b>${escapeHtml(session.title)}</b><small>${escapeHtml(session.time)} · ${escapeHtml(session.location)}</small></span><i>${open ? "Hide session details ↑" : "View session details →"}</i></button>${open ? `<div class="session-expanded"><dl><div><dt>TIME</dt><dd>${escapeHtml(session.time)}</dd></div><div><dt>LOCATION</dt><dd><a href="${mapHref(session.room)}">${escapeHtml(session.location)}</a></dd></div><div><dt>FORMAT</dt><dd>${escapeHtml(session.format)}</dd></div><div><dt>PEOPLE</dt><dd>${escapeHtml(session.host)}</dd></div></dl><button class="secondary-button session-specific-schedule ${sessionSaved ? "saved-action" : ""}" type="button" data-session-key="${sessionKey}">${sessionSaved ? "In My plan ✓" : "Add this session to My plan"}</button> <a class="secondary-button" href="${programHref(session.id)}">Open in Program</a></div>` : ""}</article>`;
+    return `<article class="detail-session-card ${open ? "open" : ""}"><button class="session-open" type="button" data-session-key="${sessionKey}" aria-expanded="${open}"><span class="session-day">${escapeHtml(session.time.split(" · ")[0])}</span><span><b>${escapeHtml(session.title)}</b><small>${escapeHtml(session.time)} · ${escapeHtml(session.location)}</small></span><i>${open ? "Hide session details ↑" : "View session details →"}</i></button>${open ? `<div class="session-expanded"><dl><div><dt>TIME</dt><dd>${escapeHtml(session.time)}</dd></div><div><dt>LOCATION</dt><dd><a href="${mapHref(session.room)}">${escapeHtml(session.location)}</a></dd></div><div><dt>FORMAT</dt><dd>${escapeHtml(session.format)}</dd></div><div><dt>PEOPLE</dt><dd>${escapeHtml(session.host)}</dd></div></dl><button class="secondary-button session-specific-schedule ${sessionSaved ? "saved-action" : ""}" type="button" data-session-key="${sessionKey}">${sessionSaved ? "✓ In My plan" : "Add this session to My plan"}</button> <a class="secondary-button" href="${programHref(session.id)}">Open in Program</a></div>` : ""}</article>`;
   }).join("");
   $("#contentDetail").innerHTML = `
     <button id="backToRecommendations" class="detail-back" type="button">← Back to Recommendations</button>
-    <header class="detail-hero"><div class="content-type-row"><span class="content-type ${item.type.toLowerCase()}">${item.type.toUpperCase()}</span><span class="content-lens">${escapeHtml(item.topic)}</span></div><h1>${escapeHtml(item.title)}</h1><p class="detail-authors">${escapeHtml(item.authors)}</p><p class="detail-meta">${escapeHtml(item.meta)}</p><div class="detail-reason"><span>WHY THIS APPEARED</span><p>${escapeHtml(personalizedReason(item.why))}</p></div><div class="detail-primary-actions"><button id="detailSave" class="secondary-button ${saved ? "saved-action" : ""}" type="button" ${item.contentId ? "" : "hidden"}>${saved ? "Saved to My ✓" : "Save paper"}</button><button id="detailSchedule" class="primary-button ${scheduled ? "scheduled" : ""}" type="button">${scheduled ? "In My plan ✓" : "Add to My plan"}</button></div></header>
+    <header class="detail-hero"><div class="content-type-row"><span class="content-type ${item.type.toLowerCase()}">${item.type.toUpperCase()}</span><span class="content-lens">${escapeHtml(item.topic)}</span></div><h1>${escapeHtml(item.title)}</h1><p class="detail-authors">${escapeHtml(item.authors)}</p><p class="detail-meta">${escapeHtml(item.meta)}</p><div class="detail-reason"><span>WHY THIS APPEARED</span><p>${escapeHtml(personalizedReason(item.why))}</p></div><div class="detail-primary-actions"><button id="detailSave" class="secondary-button ${saved ? "saved-action" : ""}" type="button" ${item.contentId ? "" : "hidden"}>${saved ? "✓ Saved" : "Save paper"}</button><button id="detailSchedule" class="primary-button ${scheduled ? "scheduled" : ""}" type="button">${scheduled ? "✓ In My plan" : "Add to My plan"}</button></div></header>
     <section class="research-materials" aria-labelledby="materials-title"><div class="detail-section-heading"><p class="section-kicker">RESEARCH MATERIALS</p><h2 id="materials-title">Read or watch before choosing a session.</h2></div><div class="material-grid"><article class="material-card ${item.paperAvailable ? "" : "unavailable-card"}"><div class="material-icon">▤</div><div><span>PAPER</span><h3>Read Full Paper</h3><p>${item.paperAvailable ? `Open the paper for “${escapeHtml(item.title)}”.` : "A paper is not available for this item."}</p></div><button class="material-action primary-button" type="button" ${item.paperAvailable ? "" : "disabled"}>${item.paperAvailable ? "Read Full Paper" : "Paper unavailable"}</button></article><article class="material-card ${item.videoAvailable ? "" : "unavailable-card"}"><div class="material-icon">▶</div><div><span>PRESENTATION VIDEO</span><h3>Watch Presentation</h3><p>${item.videoAvailable ? `Presentation recording · ${escapeHtml(item.videoDuration)}.` : "A presentation video has not been published."}</p></div><button class="material-action primary-button" type="button" ${item.videoAvailable ? "" : "disabled"}>${item.videoAvailable ? "Watch Presentation" : "Video unavailable"}</button></article></div></section>
     <section class="detail-body-grid"><article class="detail-copy"><p class="section-kicker">ABSTRACT & TOPICS</p><h2>Understand the research first.</h2><p>${escapeHtml(item.abstract)}</p><div class="role-row"><span class="tag">${escapeHtml(item.topic)}</span><span class="tag">${escapeHtml(item.bridge)}</span></div></article><aside class="session-summary"><p class="section-kicker">CONFERENCE CONNECTION</p><h2>${sessions.length} ${sessions.length === 1 ? "session" : "sessions"}</h2><p>Each session below opens independently, so you can check its time, place and format before adding it to your schedule.</p></aside></section>
     <section class="detail-sessions"><div class="detail-section-heading"><p class="section-kicker">SESSIONS, TIME & LOCATION</p><h2>Open every session before deciding.</h2></div><div class="detail-session-list">${sessionCards}</div></section>
     <section class="detail-related"><p class="section-kicker">RELATED RESEARCH & PEOPLE</p><h2>Continue into the conference network.</h2><div class="detail-related-grid">${relatedPeople.map(person => `<button class="related-person" type="button" data-person-id="${person.id}"><span class="avatar" style="--avatar:${person.color}">${person.initials}</span><span><b>${escapeHtml(person.name)}</b><small>${escapeHtml(person.affiliation)}</small></span><i>View profile →</i></button>`).join("")}</div></section>`;
-  $("#backToRecommendations").addEventListener("click", () => setView("recommendations"));
-  const toggleSave = () => { state.contentSaves.has(item.id) ? state.contentSaves.delete(item.id) : state.contentSaves.add(item.id); persistRecommendationFeedback(); renderRecommendations(); renderContentDetail(item); showToast(state.contentSaves.has(item.id) ? "Saved to My." : "Removed from My."); };
+  $("#backToRecommendations").addEventListener("click", () => history.state && history.state.recDetail ? history.back() : setView("recommendations"));
+  const toggleSave = () => { state.contentSaves.has(item.id) ? state.contentSaves.delete(item.id) : state.contentSaves.add(item.id); persistRecommendationFeedback(); renderRecommendations(); renderContentDetail(item); showToast(state.contentSaves.has(item.id) ? "Paper saved." : "Paper removed."); };
   const toggleSchedule = () => { state.scheduleSaves.has(item.id) ? state.scheduleSaves.delete(item.id) : state.scheduleSaves.add(item.id); persistRecommendationFeedback(); renderRecommendations(); renderContentDetail(item); showToast(state.scheduleSaves.has(item.id) ? "Added to My plan." : "Removed from My plan."); };
   $("#detailSave").addEventListener("click", toggleSave); $("#detailSchedule").addEventListener("click", toggleSchedule);
   $$(".session-open").forEach(button => button.addEventListener("click", () => { state.activeSession = state.activeSession === button.dataset.sessionKey ? null : button.dataset.sessionKey; renderContentDetail(item); }));
@@ -1229,7 +1229,8 @@ function openContentDetail(item) {
   state.activeContent = item; state.activeSession = null; state.view = "content-detail"; closeDrawers();
   $("#peopleView").hidden = true; $("#recommendationsView").hidden = true; $("#contentDetailView").hidden = false;
   if (window.CHIShell) CHIShell.setActive("recommendations");
-  history.replaceState(null, "", `#recommendations-${item.id}`); renderContentDetail(item); window.scrollTo({top: 0, behavior: "smooth"});
+  // Push an entry so the browser Back button returns to the list instead of leaving the site.
+  if (location.hash !== `#recommendations-${item.id}`) history.pushState({ recDetail: true }, "", `#recommendations-${item.id}`); renderContentDetail(item); window.scrollTo({top: 0, behavior: "smooth"});
 }
 
 function persistRecommendationFeedback() {
@@ -1350,7 +1351,6 @@ $("#closeSaveDialog").addEventListener("click", () => saveDialog.close()); $("#c
 $("#saveForm").addEventListener("submit", event => {
   event.preventDefault();
   const person = state.activePerson; const intention = $("input[name='intention']:checked")?.value; const context = $("#contextSelect").value;
-  if (!context) { $("#contextSelect").focus(); showToast("Choose where you noticed this person."); return; }
   state.saved[person.id] = { intention, context, note: $("#privateNote").value.trim(), savedAt: new Date().toISOString(), name: person.name, affiliation: person.affiliation };
   persistSaves(); saveDialog.close(); showToast(`${person.name} saved with context.`);
 });

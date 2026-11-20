@@ -73,18 +73,21 @@
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[item[0]] + '</svg>' +
       '<span>' + item[1] + '</span>' + (badge ? '<span class="chi-badge" id="chiMyCount">0</span>' : '') + '</a></li>';
   }
+  // Demo clock (same value as app/src/data/now.ts, exported in shared/data.js).
+  var NOW = (window.CHI && window.CHI.now) || { date: '2027-05-10', time: '11:20', label: 'Mon, May 10 · 11:20' };
+  var clock = '<div class="chi-clock" title="The prototype is set to a fixed moment during the conference"><i aria-hidden="true"></i><span><b>' + NOW.label + '</b><small>Demo time · Pittsburgh</small></span></div>';
   var brand = '<a class="chi-brand" href="' + ROOT + 'program/"><span class="chi-brand-mark" aria-hidden="true">CHI</span><span><b>CHI 2027</b><small>Pittsburgh · May 10–14</small></span></a>';
   var side = document.createElement('nav');
   side.className = 'chi-side';
   side.id = 'chiSide';
   side.setAttribute('aria-label', 'Site');
-  side.innerHTML = brand +
+  side.innerHTML = brand + clock +
     '<ul class="chi-nav">' + ITEMS.map(function (it) { return link(it); }).join('') + '</ul>' +
     '<div class="chi-sep"></div>' +
     '<ul class="chi-nav">' + link(['my', 'My', 'my/'], true) + '</ul>' +
     '<div class="chi-side-foot"><b>Prototype</b>' +
     '<p>Sessions, papers and people are fictional. Venue layout, accessibility FAQ and award list are adapted from CHI 2026 for testing.</p>' +
-    '<p>Conference time · Pittsburgh (UTC −04:00)</p></div>';
+    '<p>Times are Pittsburgh time (UTC −04:00).</p></div>';
 
   var skip = document.createElement('a');
   skip.className = 'chi-skip';
@@ -93,7 +96,7 @@
 
   var top = document.createElement('div');
   top.className = 'chi-topbar';
-  top.innerHTML = brand + '<button class="chi-menu" type="button" aria-controls="chiSide" aria-expanded="false">Menu</button>';
+  top.innerHTML = brand + '<span class="chi-top-clock" aria-label="Demo time ' + NOW.label + '">' + NOW.label.replace('Mon, ', '') + '</span><button class="chi-menu" type="button" aria-controls="chiSide" aria-expanded="false">Menu</button>';
 
   body.classList.add('chi-shell-body');
   body.insertBefore(side, body.firstChild);
